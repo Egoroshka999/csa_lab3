@@ -1,0 +1,595 @@
+in_source: |-
+  org 10
+  message:
+      .word 18, 'What is your name?'
+  message_pointer:
+      .word message
+  greeting:
+      .word 7, 'Hello, '
+  greeting_pointer:
+      .word greeting
+  exclamation:
+      .word 1, 33
+  exclamation_pointer:
+      .word exclamation
+  cycles:
+      .word 0
+  in_port:
+      .word 0
+  out_port:
+      .word 1
+  flag:
+      .word 0
+  line_feed:
+      .word 10
+  tmp:
+      .word 0
+
+  _start:
+      ; вывод вопрошающего сообщения
+      load message
+      store cycles
+      message_loop:
+          load message_pointer
+          inc
+          store message_pointer
+          load (message_pointer)
+          out out_port
+          load cycles
+          dec
+          store cycles
+          jnz message_loop
+      ; ожидание ввода
+      spin_loop:
+          in in_port ; получение слова из порта ввода
+          cmp line_feed
+          jnz continue
+          load flag
+          inc
+          store flag
+          continue:
+              store (buffer_pointer) ; сохранение в буфер
+              load buffer_pointer ; сдвиг указателя
+              inc
+              store buffer_pointer
+              load buffer_len ; увеличение длины
+              inc
+              store buffer_len
+
+          load flag
+          jz spin_loop
+
+      ; вывод отступа
+      load line_feed
+      out out_port
+      ; вывод приветствия
+      load greeting
+      store cycles
+      greeting_loop:
+          load greeting_pointer
+          inc
+          store greeting_pointer
+          load (greeting_pointer)
+          out out_port
+          load cycles
+          dec
+          store cycles
+          jnz greeting_loop
+      load buffer_len
+      dec
+      store cycles
+      name_loop:
+          load (buffer_start_pointer)
+          out out_port
+          load buffer_start_pointer
+          inc
+          store buffer_start_pointer
+          load cycles
+          dec
+          store cycles
+          jnz name_loop
+      exclamation_printing:
+          load exclamation_pointer
+          inc
+          store exclamation_pointer
+          load (exclamation_pointer)
+          out out_port
+      halt
+
+
+  buffer_len:
+      .word 0
+  buffer_pointer:
+      .word buffer
+  buffer_start_pointer:
+      .word buffer
+  buffer:
+      .word 0
+in_stdin: |
+  ['E', 'g', 'o', 'r', '\n']
+out_code: |-
+  [{"index": 0, "opcode": "jmp", "value": 48, "is_indirect": false},
+   {"index": 10, "opcode": "nop", "value": 18, "is_indirect": false},
+   {"index": 11, "opcode": "nop", "value": 87, "is_indirect": false},
+   {"index": 12, "opcode": "nop", "value": 104, "is_indirect": false},
+   {"index": 13, "opcode": "nop", "value": 97, "is_indirect": false},
+   {"index": 14, "opcode": "nop", "value": 116, "is_indirect": false},
+   {"index": 15, "opcode": "nop", "value": 32, "is_indirect": false},
+   {"index": 16, "opcode": "nop", "value": 105, "is_indirect": false},
+   {"index": 17, "opcode": "nop", "value": 115, "is_indirect": false},
+   {"index": 18, "opcode": "nop", "value": 32, "is_indirect": false},
+   {"index": 19, "opcode": "nop", "value": 121, "is_indirect": false},
+   {"index": 20, "opcode": "nop", "value": 111, "is_indirect": false},
+   {"index": 21, "opcode": "nop", "value": 117, "is_indirect": false},
+   {"index": 22, "opcode": "nop", "value": 114, "is_indirect": false},
+   {"index": 23, "opcode": "nop", "value": 32, "is_indirect": false},
+   {"index": 24, "opcode": "nop", "value": 110, "is_indirect": false},
+   {"index": 25, "opcode": "nop", "value": 97, "is_indirect": false},
+   {"index": 26, "opcode": "nop", "value": 109, "is_indirect": false},
+   {"index": 27, "opcode": "nop", "value": 101, "is_indirect": false},
+   {"index": 28, "opcode": "nop", "value": 63, "is_indirect": false},
+   {"index": 29, "opcode": "nop", "value": 10, "is_indirect": false},
+   {"index": 30, "opcode": "nop", "value": 7, "is_indirect": false},
+   {"index": 31, "opcode": "nop", "value": 72, "is_indirect": false},
+   {"index": 32, "opcode": "nop", "value": 101, "is_indirect": false},
+   {"index": 33, "opcode": "nop", "value": 108, "is_indirect": false},
+   {"index": 34, "opcode": "nop", "value": 108, "is_indirect": false},
+   {"index": 35, "opcode": "nop", "value": 111, "is_indirect": false},
+   {"index": 36, "opcode": "nop", "value": 44, "is_indirect": false},
+   {"index": 37, "opcode": "nop", "value": 32, "is_indirect": false},
+   {"index": 38, "opcode": "nop", "value": 30, "is_indirect": false},
+   {"index": 39, "opcode": "nop", "value": 1, "is_indirect": false},
+   {"index": 40, "opcode": "nop", "value": 33, "is_indirect": false},
+   {"index": 41, "opcode": "nop", "value": 39, "is_indirect": false},
+   {"index": 42, "opcode": "nop", "value": 0, "is_indirect": false},
+   {"index": 43, "opcode": "nop", "value": 0, "is_indirect": false},
+   {"index": 44, "opcode": "nop", "value": 1, "is_indirect": false},
+   {"index": 45, "opcode": "nop", "value": 0, "is_indirect": false},
+   {"index": 46, "opcode": "nop", "value": 10, "is_indirect": false},
+   {"index": 47, "opcode": "nop", "value": 0, "is_indirect": false},
+   {"index": 48, "opcode": "load", "value": 10, "is_indirect": false},
+   {"index": 49, "opcode": "store", "value": 42, "is_indirect": false},
+   {"index": 50, "opcode": "load", "value": 29, "is_indirect": false},
+   {"index": 51, "opcode": "inc", "value": 0, "is_indirect": false},
+   {"index": 52, "opcode": "store", "value": 29, "is_indirect": false},
+   {"index": 53, "opcode": "load", "value": 29, "is_indirect": true},
+   {"index": 54, "opcode": "out", "value": 44, "is_indirect": false},
+   {"index": 55, "opcode": "load", "value": 42, "is_indirect": false},
+   {"index": 56, "opcode": "dec", "value": 0, "is_indirect": false},
+   {"index": 57, "opcode": "store", "value": 42, "is_indirect": false},
+   {"index": 58, "opcode": "jnz", "value": 50, "is_indirect": false},
+   {"index": 59, "opcode": "in", "value": 43, "is_indirect": false},
+   {"index": 60, "opcode": "cmp", "value": 46, "is_indirect": false},
+   {"index": 61, "opcode": "jnz", "value": 65, "is_indirect": false},
+   {"index": 62, "opcode": "load", "value": 45, "is_indirect": false},
+   {"index": 63, "opcode": "inc", "value": 0, "is_indirect": false},
+   {"index": 64, "opcode": "store", "value": 45, "is_indirect": false},
+   {"index": 65, "opcode": "store", "value": 106, "is_indirect": true},
+   {"index": 66, "opcode": "load", "value": 106, "is_indirect": false},
+   {"index": 67, "opcode": "inc", "value": 0, "is_indirect": false},
+   {"index": 68, "opcode": "store", "value": 106, "is_indirect": false},
+   {"index": 69, "opcode": "load", "value": 105, "is_indirect": false},
+   {"index": 70, "opcode": "inc", "value": 0, "is_indirect": false},
+   {"index": 71, "opcode": "store", "value": 105, "is_indirect": false},
+   {"index": 72, "opcode": "load", "value": 45, "is_indirect": false},
+   {"index": 73, "opcode": "jz", "value": 59, "is_indirect": false},
+   {"index": 74, "opcode": "load", "value": 46, "is_indirect": false},
+   {"index": 75, "opcode": "out", "value": 44, "is_indirect": false},
+   {"index": 76, "opcode": "load", "value": 30, "is_indirect": false},
+   {"index": 77, "opcode": "store", "value": 42, "is_indirect": false},
+   {"index": 78, "opcode": "load", "value": 38, "is_indirect": false},
+   {"index": 79, "opcode": "inc", "value": 0, "is_indirect": false},
+   {"index": 80, "opcode": "store", "value": 38, "is_indirect": false},
+   {"index": 81, "opcode": "load", "value": 38, "is_indirect": true},
+   {"index": 82, "opcode": "out", "value": 44, "is_indirect": false},
+   {"index": 83, "opcode": "load", "value": 42, "is_indirect": false},
+   {"index": 84, "opcode": "dec", "value": 0, "is_indirect": false},
+   {"index": 85, "opcode": "store", "value": 42, "is_indirect": false},
+   {"index": 86, "opcode": "jnz", "value": 78, "is_indirect": false},
+   {"index": 87, "opcode": "load", "value": 105, "is_indirect": false},
+   {"index": 88, "opcode": "dec", "value": 0, "is_indirect": false},
+   {"index": 89, "opcode": "store", "value": 42, "is_indirect": false},
+   {"index": 90, "opcode": "load", "value": 107, "is_indirect": true},
+   {"index": 91, "opcode": "out", "value": 44, "is_indirect": false},
+   {"index": 92, "opcode": "load", "value": 107, "is_indirect": false},
+   {"index": 93, "opcode": "inc", "value": 0, "is_indirect": false},
+   {"index": 94, "opcode": "store", "value": 107, "is_indirect": false},
+   {"index": 95, "opcode": "load", "value": 42, "is_indirect": false},
+   {"index": 96, "opcode": "dec", "value": 0, "is_indirect": false},
+   {"index": 97, "opcode": "store", "value": 42, "is_indirect": false},
+   {"index": 98, "opcode": "jnz", "value": 90, "is_indirect": false},
+   {"index": 99, "opcode": "load", "value": 41, "is_indirect": false},
+   {"index": 100, "opcode": "inc", "value": 0, "is_indirect": false},
+   {"index": 101, "opcode": "store", "value": 41, "is_indirect": false},
+   {"index": 102, "opcode": "load", "value": 41, "is_indirect": true},
+   {"index": 103, "opcode": "out", "value": 44, "is_indirect": false},
+   {"index": 104, "opcode": "halt", "value": 0, "is_indirect": false},
+   {"index": 105, "opcode": "nop", "value": 0, "is_indirect": false},
+   {"index": 106, "opcode": "nop", "value": 108, "is_indirect": false},
+   {"index": 107, "opcode": "nop", "value": 108, "is_indirect": false},
+   {"index": 108, "opcode": "nop", "value": 0, "is_indirect": false}]
+out_stdout: |
+  source LoC: 106 code instr: 100
+  ============================================================
+  What is your name?
+  Hello, Egor!
+  [87, 104, 97, 116, 32, 105, 115, 32, 121, 111, 117, 114, 32, 110, 97, 109, 101, 63, 10, 72, 101, 108, 108, 111, 44, 32, 69, 103, 111, 114, 33]
+  instr_counter:  339 ticks: 1312
+out_log: |
+  DEBUG   processor:decode_and_execute_instruction TICK:    3 | AC:    0 | PC:  48 | IR: jmp   | DR:      48 | SP:   0 | Addr:   0 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      48
+  DEBUG   processor:decode_and_execute_instruction TICK:    7 | AC:   18 | PC:  49 | IR: load  | DR:      18 | SP:   0 | Addr:  10 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      18
+  DEBUG   processor:decode_and_execute_instruction TICK:   11 | AC:   18 | PC:  50 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:      18 | N: 0 | Z: 0 | mem[Addr]:      18
+  DEBUG   processor:decode_and_execute_instruction TICK:   15 | AC:   10 | PC:  51 | IR: load  | DR:      10 | SP:   0 | Addr:  29 | ToMem:      18 | N: 0 | Z: 0 | mem[Addr]:      10
+  DEBUG   processor:decode_and_execute_instruction TICK:   18 | AC:   11 | PC:  52 | IR: inc   | DR:       0 | SP:   0 | Addr:  51 | ToMem:      18 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:   22 | AC:   11 | PC:  53 | IR: store | DR:      29 | SP:   0 | Addr:  29 | ToMem:      11 | N: 0 | Z: 0 | mem[Addr]:      11
+  DEBUG   processor:decode_and_execute_instruction TICK:   28 | AC:   87 | PC:  54 | IR: load  | DR:      87 | SP:   0 | Addr:  11 | ToMem:      11 | N: 0 | Z: 0 | mem[Addr]:      87
+  DEBUG   processor:signal_output output_buffer: '' << 'W'
+  DEBUG   processor:decode_and_execute_instruction TICK:   32 | AC:   87 | PC:  55 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      11 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:   36 | AC:   18 | PC:  56 | IR: load  | DR:      18 | SP:   0 | Addr:  42 | ToMem:      11 | N: 0 | Z: 0 | mem[Addr]:      18
+  DEBUG   processor:decode_and_execute_instruction TICK:   39 | AC:   17 | PC:  57 | IR: dec   | DR:       0 | SP:   0 | Addr:  56 | ToMem:      11 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:   43 | AC:   17 | PC:  58 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:      17 | N: 0 | Z: 0 | mem[Addr]:      17
+  DEBUG   processor:decode_and_execute_instruction TICK:   46 | AC:   17 | PC:  50 | IR: jnz   | DR:      50 | SP:   0 | Addr:  58 | ToMem:      17 | N: 0 | Z: 0 | mem[Addr]:      50
+  DEBUG   processor:decode_and_execute_instruction TICK:   50 | AC:   11 | PC:  51 | IR: load  | DR:      11 | SP:   0 | Addr:  29 | ToMem:      17 | N: 0 | Z: 0 | mem[Addr]:      11
+  DEBUG   processor:decode_and_execute_instruction TICK:   53 | AC:   12 | PC:  52 | IR: inc   | DR:       0 | SP:   0 | Addr:  51 | ToMem:      17 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:   57 | AC:   12 | PC:  53 | IR: store | DR:      29 | SP:   0 | Addr:  29 | ToMem:      12 | N: 0 | Z: 0 | mem[Addr]:      12
+  DEBUG   processor:decode_and_execute_instruction TICK:   63 | AC:  104 | PC:  54 | IR: load  | DR:     104 | SP:   0 | Addr:  12 | ToMem:      12 | N: 0 | Z: 0 | mem[Addr]:     104
+  DEBUG   processor:signal_output output_buffer: 'W' << 'h'
+  DEBUG   processor:decode_and_execute_instruction TICK:   67 | AC:  104 | PC:  55 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      12 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:   71 | AC:   17 | PC:  56 | IR: load  | DR:      17 | SP:   0 | Addr:  42 | ToMem:      12 | N: 0 | Z: 0 | mem[Addr]:      17
+  DEBUG   processor:decode_and_execute_instruction TICK:   74 | AC:   16 | PC:  57 | IR: dec   | DR:       0 | SP:   0 | Addr:  56 | ToMem:      12 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:   78 | AC:   16 | PC:  58 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:      16 | N: 0 | Z: 0 | mem[Addr]:      16
+  DEBUG   processor:decode_and_execute_instruction TICK:   81 | AC:   16 | PC:  50 | IR: jnz   | DR:      50 | SP:   0 | Addr:  58 | ToMem:      16 | N: 0 | Z: 0 | mem[Addr]:      50
+  DEBUG   processor:decode_and_execute_instruction TICK:   85 | AC:   12 | PC:  51 | IR: load  | DR:      12 | SP:   0 | Addr:  29 | ToMem:      16 | N: 0 | Z: 0 | mem[Addr]:      12
+  DEBUG   processor:decode_and_execute_instruction TICK:   88 | AC:   13 | PC:  52 | IR: inc   | DR:       0 | SP:   0 | Addr:  51 | ToMem:      16 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:   92 | AC:   13 | PC:  53 | IR: store | DR:      29 | SP:   0 | Addr:  29 | ToMem:      13 | N: 0 | Z: 0 | mem[Addr]:      13
+  DEBUG   processor:decode_and_execute_instruction TICK:   98 | AC:   97 | PC:  54 | IR: load  | DR:      97 | SP:   0 | Addr:  13 | ToMem:      13 | N: 0 | Z: 0 | mem[Addr]:      97
+  DEBUG   processor:signal_output output_buffer: 'Wh' << 'a'
+  DEBUG   processor:decode_and_execute_instruction TICK:  102 | AC:   97 | PC:  55 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      13 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  106 | AC:   16 | PC:  56 | IR: load  | DR:      16 | SP:   0 | Addr:  42 | ToMem:      13 | N: 0 | Z: 0 | mem[Addr]:      16
+  DEBUG   processor:decode_and_execute_instruction TICK:  109 | AC:   15 | PC:  57 | IR: dec   | DR:       0 | SP:   0 | Addr:  56 | ToMem:      13 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  113 | AC:   15 | PC:  58 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:      15 | N: 0 | Z: 0 | mem[Addr]:      15
+  DEBUG   processor:decode_and_execute_instruction TICK:  116 | AC:   15 | PC:  50 | IR: jnz   | DR:      50 | SP:   0 | Addr:  58 | ToMem:      15 | N: 0 | Z: 0 | mem[Addr]:      50
+  DEBUG   processor:decode_and_execute_instruction TICK:  120 | AC:   13 | PC:  51 | IR: load  | DR:      13 | SP:   0 | Addr:  29 | ToMem:      15 | N: 0 | Z: 0 | mem[Addr]:      13
+  DEBUG   processor:decode_and_execute_instruction TICK:  123 | AC:   14 | PC:  52 | IR: inc   | DR:       0 | SP:   0 | Addr:  51 | ToMem:      15 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  127 | AC:   14 | PC:  53 | IR: store | DR:      29 | SP:   0 | Addr:  29 | ToMem:      14 | N: 0 | Z: 0 | mem[Addr]:      14
+  DEBUG   processor:decode_and_execute_instruction TICK:  133 | AC:  116 | PC:  54 | IR: load  | DR:     116 | SP:   0 | Addr:  14 | ToMem:      14 | N: 0 | Z: 0 | mem[Addr]:     116
+  DEBUG   processor:signal_output output_buffer: 'Wha' << 't'
+  DEBUG   processor:decode_and_execute_instruction TICK:  137 | AC:  116 | PC:  55 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      14 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  141 | AC:   15 | PC:  56 | IR: load  | DR:      15 | SP:   0 | Addr:  42 | ToMem:      14 | N: 0 | Z: 0 | mem[Addr]:      15
+  DEBUG   processor:decode_and_execute_instruction TICK:  144 | AC:   14 | PC:  57 | IR: dec   | DR:       0 | SP:   0 | Addr:  56 | ToMem:      14 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  148 | AC:   14 | PC:  58 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:      14 | N: 0 | Z: 0 | mem[Addr]:      14
+  DEBUG   processor:decode_and_execute_instruction TICK:  151 | AC:   14 | PC:  50 | IR: jnz   | DR:      50 | SP:   0 | Addr:  58 | ToMem:      14 | N: 0 | Z: 0 | mem[Addr]:      50
+  DEBUG   processor:decode_and_execute_instruction TICK:  155 | AC:   14 | PC:  51 | IR: load  | DR:      14 | SP:   0 | Addr:  29 | ToMem:      14 | N: 0 | Z: 0 | mem[Addr]:      14
+  DEBUG   processor:decode_and_execute_instruction TICK:  158 | AC:   15 | PC:  52 | IR: inc   | DR:       0 | SP:   0 | Addr:  51 | ToMem:      14 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  162 | AC:   15 | PC:  53 | IR: store | DR:      29 | SP:   0 | Addr:  29 | ToMem:      15 | N: 0 | Z: 0 | mem[Addr]:      15
+  DEBUG   processor:decode_and_execute_instruction TICK:  168 | AC:   32 | PC:  54 | IR: load  | DR:      32 | SP:   0 | Addr:  15 | ToMem:      15 | N: 0 | Z: 0 | mem[Addr]:      32
+  DEBUG   processor:signal_output output_buffer: 'What' << ' '
+  DEBUG   processor:decode_and_execute_instruction TICK:  172 | AC:   32 | PC:  55 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      15 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  176 | AC:   14 | PC:  56 | IR: load  | DR:      14 | SP:   0 | Addr:  42 | ToMem:      15 | N: 0 | Z: 0 | mem[Addr]:      14
+  DEBUG   processor:decode_and_execute_instruction TICK:  179 | AC:   13 | PC:  57 | IR: dec   | DR:       0 | SP:   0 | Addr:  56 | ToMem:      15 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  183 | AC:   13 | PC:  58 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:      13 | N: 0 | Z: 0 | mem[Addr]:      13
+  DEBUG   processor:decode_and_execute_instruction TICK:  186 | AC:   13 | PC:  50 | IR: jnz   | DR:      50 | SP:   0 | Addr:  58 | ToMem:      13 | N: 0 | Z: 0 | mem[Addr]:      50
+  DEBUG   processor:decode_and_execute_instruction TICK:  190 | AC:   15 | PC:  51 | IR: load  | DR:      15 | SP:   0 | Addr:  29 | ToMem:      13 | N: 0 | Z: 0 | mem[Addr]:      15
+  DEBUG   processor:decode_and_execute_instruction TICK:  193 | AC:   16 | PC:  52 | IR: inc   | DR:       0 | SP:   0 | Addr:  51 | ToMem:      13 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  197 | AC:   16 | PC:  53 | IR: store | DR:      29 | SP:   0 | Addr:  29 | ToMem:      16 | N: 0 | Z: 0 | mem[Addr]:      16
+  DEBUG   processor:decode_and_execute_instruction TICK:  203 | AC:  105 | PC:  54 | IR: load  | DR:     105 | SP:   0 | Addr:  16 | ToMem:      16 | N: 0 | Z: 0 | mem[Addr]:     105
+  DEBUG   processor:signal_output output_buffer: 'What ' << 'i'
+  DEBUG   processor:decode_and_execute_instruction TICK:  207 | AC:  105 | PC:  55 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      16 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  211 | AC:   13 | PC:  56 | IR: load  | DR:      13 | SP:   0 | Addr:  42 | ToMem:      16 | N: 0 | Z: 0 | mem[Addr]:      13
+  DEBUG   processor:decode_and_execute_instruction TICK:  214 | AC:   12 | PC:  57 | IR: dec   | DR:       0 | SP:   0 | Addr:  56 | ToMem:      16 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  218 | AC:   12 | PC:  58 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:      12 | N: 0 | Z: 0 | mem[Addr]:      12
+  DEBUG   processor:decode_and_execute_instruction TICK:  221 | AC:   12 | PC:  50 | IR: jnz   | DR:      50 | SP:   0 | Addr:  58 | ToMem:      12 | N: 0 | Z: 0 | mem[Addr]:      50
+  DEBUG   processor:decode_and_execute_instruction TICK:  225 | AC:   16 | PC:  51 | IR: load  | DR:      16 | SP:   0 | Addr:  29 | ToMem:      12 | N: 0 | Z: 0 | mem[Addr]:      16
+  DEBUG   processor:decode_and_execute_instruction TICK:  228 | AC:   17 | PC:  52 | IR: inc   | DR:       0 | SP:   0 | Addr:  51 | ToMem:      12 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  232 | AC:   17 | PC:  53 | IR: store | DR:      29 | SP:   0 | Addr:  29 | ToMem:      17 | N: 0 | Z: 0 | mem[Addr]:      17
+  DEBUG   processor:decode_and_execute_instruction TICK:  238 | AC:  115 | PC:  54 | IR: load  | DR:     115 | SP:   0 | Addr:  17 | ToMem:      17 | N: 0 | Z: 0 | mem[Addr]:     115
+  DEBUG   processor:signal_output output_buffer: 'What i' << 's'
+  DEBUG   processor:decode_and_execute_instruction TICK:  242 | AC:  115 | PC:  55 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      17 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  246 | AC:   12 | PC:  56 | IR: load  | DR:      12 | SP:   0 | Addr:  42 | ToMem:      17 | N: 0 | Z: 0 | mem[Addr]:      12
+  DEBUG   processor:decode_and_execute_instruction TICK:  249 | AC:   11 | PC:  57 | IR: dec   | DR:       0 | SP:   0 | Addr:  56 | ToMem:      17 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  253 | AC:   11 | PC:  58 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:      11 | N: 0 | Z: 0 | mem[Addr]:      11
+  DEBUG   processor:decode_and_execute_instruction TICK:  256 | AC:   11 | PC:  50 | IR: jnz   | DR:      50 | SP:   0 | Addr:  58 | ToMem:      11 | N: 0 | Z: 0 | mem[Addr]:      50
+  DEBUG   processor:decode_and_execute_instruction TICK:  260 | AC:   17 | PC:  51 | IR: load  | DR:      17 | SP:   0 | Addr:  29 | ToMem:      11 | N: 0 | Z: 0 | mem[Addr]:      17
+  DEBUG   processor:decode_and_execute_instruction TICK:  263 | AC:   18 | PC:  52 | IR: inc   | DR:       0 | SP:   0 | Addr:  51 | ToMem:      11 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  267 | AC:   18 | PC:  53 | IR: store | DR:      29 | SP:   0 | Addr:  29 | ToMem:      18 | N: 0 | Z: 0 | mem[Addr]:      18
+  DEBUG   processor:decode_and_execute_instruction TICK:  273 | AC:   32 | PC:  54 | IR: load  | DR:      32 | SP:   0 | Addr:  18 | ToMem:      18 | N: 0 | Z: 0 | mem[Addr]:      32
+  DEBUG   processor:signal_output output_buffer: 'What is' << ' '
+  DEBUG   processor:decode_and_execute_instruction TICK:  277 | AC:   32 | PC:  55 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      18 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  281 | AC:   11 | PC:  56 | IR: load  | DR:      11 | SP:   0 | Addr:  42 | ToMem:      18 | N: 0 | Z: 0 | mem[Addr]:      11
+  DEBUG   processor:decode_and_execute_instruction TICK:  284 | AC:   10 | PC:  57 | IR: dec   | DR:       0 | SP:   0 | Addr:  56 | ToMem:      18 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  288 | AC:   10 | PC:  58 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:      10 | N: 0 | Z: 0 | mem[Addr]:      10
+  DEBUG   processor:decode_and_execute_instruction TICK:  291 | AC:   10 | PC:  50 | IR: jnz   | DR:      50 | SP:   0 | Addr:  58 | ToMem:      10 | N: 0 | Z: 0 | mem[Addr]:      50
+  DEBUG   processor:decode_and_execute_instruction TICK:  295 | AC:   18 | PC:  51 | IR: load  | DR:      18 | SP:   0 | Addr:  29 | ToMem:      10 | N: 0 | Z: 0 | mem[Addr]:      18
+  DEBUG   processor:decode_and_execute_instruction TICK:  298 | AC:   19 | PC:  52 | IR: inc   | DR:       0 | SP:   0 | Addr:  51 | ToMem:      10 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  302 | AC:   19 | PC:  53 | IR: store | DR:      29 | SP:   0 | Addr:  29 | ToMem:      19 | N: 0 | Z: 0 | mem[Addr]:      19
+  DEBUG   processor:decode_and_execute_instruction TICK:  308 | AC:  121 | PC:  54 | IR: load  | DR:     121 | SP:   0 | Addr:  19 | ToMem:      19 | N: 0 | Z: 0 | mem[Addr]:     121
+  DEBUG   processor:signal_output output_buffer: 'What is ' << 'y'
+  DEBUG   processor:decode_and_execute_instruction TICK:  312 | AC:  121 | PC:  55 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      19 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  316 | AC:   10 | PC:  56 | IR: load  | DR:      10 | SP:   0 | Addr:  42 | ToMem:      19 | N: 0 | Z: 0 | mem[Addr]:      10
+  DEBUG   processor:decode_and_execute_instruction TICK:  319 | AC:    9 | PC:  57 | IR: dec   | DR:       0 | SP:   0 | Addr:  56 | ToMem:      19 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  323 | AC:    9 | PC:  58 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       9 | N: 0 | Z: 0 | mem[Addr]:       9
+  DEBUG   processor:decode_and_execute_instruction TICK:  326 | AC:    9 | PC:  50 | IR: jnz   | DR:      50 | SP:   0 | Addr:  58 | ToMem:       9 | N: 0 | Z: 0 | mem[Addr]:      50
+  DEBUG   processor:decode_and_execute_instruction TICK:  330 | AC:   19 | PC:  51 | IR: load  | DR:      19 | SP:   0 | Addr:  29 | ToMem:       9 | N: 0 | Z: 0 | mem[Addr]:      19
+  DEBUG   processor:decode_and_execute_instruction TICK:  333 | AC:   20 | PC:  52 | IR: inc   | DR:       0 | SP:   0 | Addr:  51 | ToMem:       9 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  337 | AC:   20 | PC:  53 | IR: store | DR:      29 | SP:   0 | Addr:  29 | ToMem:      20 | N: 0 | Z: 0 | mem[Addr]:      20
+  DEBUG   processor:decode_and_execute_instruction TICK:  343 | AC:  111 | PC:  54 | IR: load  | DR:     111 | SP:   0 | Addr:  20 | ToMem:      20 | N: 0 | Z: 0 | mem[Addr]:     111
+  DEBUG   processor:signal_output output_buffer: 'What is y' << 'o'
+  DEBUG   processor:decode_and_execute_instruction TICK:  347 | AC:  111 | PC:  55 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      20 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  351 | AC:    9 | PC:  56 | IR: load  | DR:       9 | SP:   0 | Addr:  42 | ToMem:      20 | N: 0 | Z: 0 | mem[Addr]:       9
+  DEBUG   processor:decode_and_execute_instruction TICK:  354 | AC:    8 | PC:  57 | IR: dec   | DR:       0 | SP:   0 | Addr:  56 | ToMem:      20 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  358 | AC:    8 | PC:  58 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       8 | N: 0 | Z: 0 | mem[Addr]:       8
+  DEBUG   processor:decode_and_execute_instruction TICK:  361 | AC:    8 | PC:  50 | IR: jnz   | DR:      50 | SP:   0 | Addr:  58 | ToMem:       8 | N: 0 | Z: 0 | mem[Addr]:      50
+  DEBUG   processor:decode_and_execute_instruction TICK:  365 | AC:   20 | PC:  51 | IR: load  | DR:      20 | SP:   0 | Addr:  29 | ToMem:       8 | N: 0 | Z: 0 | mem[Addr]:      20
+  DEBUG   processor:decode_and_execute_instruction TICK:  368 | AC:   21 | PC:  52 | IR: inc   | DR:       0 | SP:   0 | Addr:  51 | ToMem:       8 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  372 | AC:   21 | PC:  53 | IR: store | DR:      29 | SP:   0 | Addr:  29 | ToMem:      21 | N: 0 | Z: 0 | mem[Addr]:      21
+  DEBUG   processor:decode_and_execute_instruction TICK:  378 | AC:  117 | PC:  54 | IR: load  | DR:     117 | SP:   0 | Addr:  21 | ToMem:      21 | N: 0 | Z: 0 | mem[Addr]:     117
+  DEBUG   processor:signal_output output_buffer: 'What is yo' << 'u'
+  DEBUG   processor:decode_and_execute_instruction TICK:  382 | AC:  117 | PC:  55 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      21 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  386 | AC:    8 | PC:  56 | IR: load  | DR:       8 | SP:   0 | Addr:  42 | ToMem:      21 | N: 0 | Z: 0 | mem[Addr]:       8
+  DEBUG   processor:decode_and_execute_instruction TICK:  389 | AC:    7 | PC:  57 | IR: dec   | DR:       0 | SP:   0 | Addr:  56 | ToMem:      21 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  393 | AC:    7 | PC:  58 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       7 | N: 0 | Z: 0 | mem[Addr]:       7
+  DEBUG   processor:decode_and_execute_instruction TICK:  396 | AC:    7 | PC:  50 | IR: jnz   | DR:      50 | SP:   0 | Addr:  58 | ToMem:       7 | N: 0 | Z: 0 | mem[Addr]:      50
+  DEBUG   processor:decode_and_execute_instruction TICK:  400 | AC:   21 | PC:  51 | IR: load  | DR:      21 | SP:   0 | Addr:  29 | ToMem:       7 | N: 0 | Z: 0 | mem[Addr]:      21
+  DEBUG   processor:decode_and_execute_instruction TICK:  403 | AC:   22 | PC:  52 | IR: inc   | DR:       0 | SP:   0 | Addr:  51 | ToMem:       7 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  407 | AC:   22 | PC:  53 | IR: store | DR:      29 | SP:   0 | Addr:  29 | ToMem:      22 | N: 0 | Z: 0 | mem[Addr]:      22
+  DEBUG   processor:decode_and_execute_instruction TICK:  413 | AC:  114 | PC:  54 | IR: load  | DR:     114 | SP:   0 | Addr:  22 | ToMem:      22 | N: 0 | Z: 0 | mem[Addr]:     114
+  DEBUG   processor:signal_output output_buffer: 'What is you' << 'r'
+  DEBUG   processor:decode_and_execute_instruction TICK:  417 | AC:  114 | PC:  55 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      22 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  421 | AC:    7 | PC:  56 | IR: load  | DR:       7 | SP:   0 | Addr:  42 | ToMem:      22 | N: 0 | Z: 0 | mem[Addr]:       7
+  DEBUG   processor:decode_and_execute_instruction TICK:  424 | AC:    6 | PC:  57 | IR: dec   | DR:       0 | SP:   0 | Addr:  56 | ToMem:      22 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  428 | AC:    6 | PC:  58 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       6 | N: 0 | Z: 0 | mem[Addr]:       6
+  DEBUG   processor:decode_and_execute_instruction TICK:  431 | AC:    6 | PC:  50 | IR: jnz   | DR:      50 | SP:   0 | Addr:  58 | ToMem:       6 | N: 0 | Z: 0 | mem[Addr]:      50
+  DEBUG   processor:decode_and_execute_instruction TICK:  435 | AC:   22 | PC:  51 | IR: load  | DR:      22 | SP:   0 | Addr:  29 | ToMem:       6 | N: 0 | Z: 0 | mem[Addr]:      22
+  DEBUG   processor:decode_and_execute_instruction TICK:  438 | AC:   23 | PC:  52 | IR: inc   | DR:       0 | SP:   0 | Addr:  51 | ToMem:       6 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  442 | AC:   23 | PC:  53 | IR: store | DR:      29 | SP:   0 | Addr:  29 | ToMem:      23 | N: 0 | Z: 0 | mem[Addr]:      23
+  DEBUG   processor:decode_and_execute_instruction TICK:  448 | AC:   32 | PC:  54 | IR: load  | DR:      32 | SP:   0 | Addr:  23 | ToMem:      23 | N: 0 | Z: 0 | mem[Addr]:      32
+  DEBUG   processor:signal_output output_buffer: 'What is your' << ' '
+  DEBUG   processor:decode_and_execute_instruction TICK:  452 | AC:   32 | PC:  55 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      23 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  456 | AC:    6 | PC:  56 | IR: load  | DR:       6 | SP:   0 | Addr:  42 | ToMem:      23 | N: 0 | Z: 0 | mem[Addr]:       6
+  DEBUG   processor:decode_and_execute_instruction TICK:  459 | AC:    5 | PC:  57 | IR: dec   | DR:       0 | SP:   0 | Addr:  56 | ToMem:      23 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  463 | AC:    5 | PC:  58 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       5 | N: 0 | Z: 0 | mem[Addr]:       5
+  DEBUG   processor:decode_and_execute_instruction TICK:  466 | AC:    5 | PC:  50 | IR: jnz   | DR:      50 | SP:   0 | Addr:  58 | ToMem:       5 | N: 0 | Z: 0 | mem[Addr]:      50
+  DEBUG   processor:decode_and_execute_instruction TICK:  470 | AC:   23 | PC:  51 | IR: load  | DR:      23 | SP:   0 | Addr:  29 | ToMem:       5 | N: 0 | Z: 0 | mem[Addr]:      23
+  DEBUG   processor:decode_and_execute_instruction TICK:  473 | AC:   24 | PC:  52 | IR: inc   | DR:       0 | SP:   0 | Addr:  51 | ToMem:       5 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  477 | AC:   24 | PC:  53 | IR: store | DR:      29 | SP:   0 | Addr:  29 | ToMem:      24 | N: 0 | Z: 0 | mem[Addr]:      24
+  DEBUG   processor:decode_and_execute_instruction TICK:  483 | AC:  110 | PC:  54 | IR: load  | DR:     110 | SP:   0 | Addr:  24 | ToMem:      24 | N: 0 | Z: 0 | mem[Addr]:     110
+  DEBUG   processor:signal_output output_buffer: 'What is your ' << 'n'
+  DEBUG   processor:decode_and_execute_instruction TICK:  487 | AC:  110 | PC:  55 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      24 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  491 | AC:    5 | PC:  56 | IR: load  | DR:       5 | SP:   0 | Addr:  42 | ToMem:      24 | N: 0 | Z: 0 | mem[Addr]:       5
+  DEBUG   processor:decode_and_execute_instruction TICK:  494 | AC:    4 | PC:  57 | IR: dec   | DR:       0 | SP:   0 | Addr:  56 | ToMem:      24 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  498 | AC:    4 | PC:  58 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       4 | N: 0 | Z: 0 | mem[Addr]:       4
+  DEBUG   processor:decode_and_execute_instruction TICK:  501 | AC:    4 | PC:  50 | IR: jnz   | DR:      50 | SP:   0 | Addr:  58 | ToMem:       4 | N: 0 | Z: 0 | mem[Addr]:      50
+  DEBUG   processor:decode_and_execute_instruction TICK:  505 | AC:   24 | PC:  51 | IR: load  | DR:      24 | SP:   0 | Addr:  29 | ToMem:       4 | N: 0 | Z: 0 | mem[Addr]:      24
+  DEBUG   processor:decode_and_execute_instruction TICK:  508 | AC:   25 | PC:  52 | IR: inc   | DR:       0 | SP:   0 | Addr:  51 | ToMem:       4 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  512 | AC:   25 | PC:  53 | IR: store | DR:      29 | SP:   0 | Addr:  29 | ToMem:      25 | N: 0 | Z: 0 | mem[Addr]:      25
+  DEBUG   processor:decode_and_execute_instruction TICK:  518 | AC:   97 | PC:  54 | IR: load  | DR:      97 | SP:   0 | Addr:  25 | ToMem:      25 | N: 0 | Z: 0 | mem[Addr]:      97
+  DEBUG   processor:signal_output output_buffer: 'What is your n' << 'a'
+  DEBUG   processor:decode_and_execute_instruction TICK:  522 | AC:   97 | PC:  55 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      25 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  526 | AC:    4 | PC:  56 | IR: load  | DR:       4 | SP:   0 | Addr:  42 | ToMem:      25 | N: 0 | Z: 0 | mem[Addr]:       4
+  DEBUG   processor:decode_and_execute_instruction TICK:  529 | AC:    3 | PC:  57 | IR: dec   | DR:       0 | SP:   0 | Addr:  56 | ToMem:      25 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  533 | AC:    3 | PC:  58 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       3 | N: 0 | Z: 0 | mem[Addr]:       3
+  DEBUG   processor:decode_and_execute_instruction TICK:  536 | AC:    3 | PC:  50 | IR: jnz   | DR:      50 | SP:   0 | Addr:  58 | ToMem:       3 | N: 0 | Z: 0 | mem[Addr]:      50
+  DEBUG   processor:decode_and_execute_instruction TICK:  540 | AC:   25 | PC:  51 | IR: load  | DR:      25 | SP:   0 | Addr:  29 | ToMem:       3 | N: 0 | Z: 0 | mem[Addr]:      25
+  DEBUG   processor:decode_and_execute_instruction TICK:  543 | AC:   26 | PC:  52 | IR: inc   | DR:       0 | SP:   0 | Addr:  51 | ToMem:       3 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  547 | AC:   26 | PC:  53 | IR: store | DR:      29 | SP:   0 | Addr:  29 | ToMem:      26 | N: 0 | Z: 0 | mem[Addr]:      26
+  DEBUG   processor:decode_and_execute_instruction TICK:  553 | AC:  109 | PC:  54 | IR: load  | DR:     109 | SP:   0 | Addr:  26 | ToMem:      26 | N: 0 | Z: 0 | mem[Addr]:     109
+  DEBUG   processor:signal_output output_buffer: 'What is your na' << 'm'
+  DEBUG   processor:decode_and_execute_instruction TICK:  557 | AC:  109 | PC:  55 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      26 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  561 | AC:    3 | PC:  56 | IR: load  | DR:       3 | SP:   0 | Addr:  42 | ToMem:      26 | N: 0 | Z: 0 | mem[Addr]:       3
+  DEBUG   processor:decode_and_execute_instruction TICK:  564 | AC:    2 | PC:  57 | IR: dec   | DR:       0 | SP:   0 | Addr:  56 | ToMem:      26 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  568 | AC:    2 | PC:  58 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       2 | N: 0 | Z: 0 | mem[Addr]:       2
+  DEBUG   processor:decode_and_execute_instruction TICK:  571 | AC:    2 | PC:  50 | IR: jnz   | DR:      50 | SP:   0 | Addr:  58 | ToMem:       2 | N: 0 | Z: 0 | mem[Addr]:      50
+  DEBUG   processor:decode_and_execute_instruction TICK:  575 | AC:   26 | PC:  51 | IR: load  | DR:      26 | SP:   0 | Addr:  29 | ToMem:       2 | N: 0 | Z: 0 | mem[Addr]:      26
+  DEBUG   processor:decode_and_execute_instruction TICK:  578 | AC:   27 | PC:  52 | IR: inc   | DR:       0 | SP:   0 | Addr:  51 | ToMem:       2 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  582 | AC:   27 | PC:  53 | IR: store | DR:      29 | SP:   0 | Addr:  29 | ToMem:      27 | N: 0 | Z: 0 | mem[Addr]:      27
+  DEBUG   processor:decode_and_execute_instruction TICK:  588 | AC:  101 | PC:  54 | IR: load  | DR:     101 | SP:   0 | Addr:  27 | ToMem:      27 | N: 0 | Z: 0 | mem[Addr]:     101
+  DEBUG   processor:signal_output output_buffer: 'What is your nam' << 'e'
+  DEBUG   processor:decode_and_execute_instruction TICK:  592 | AC:  101 | PC:  55 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      27 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  596 | AC:    2 | PC:  56 | IR: load  | DR:       2 | SP:   0 | Addr:  42 | ToMem:      27 | N: 0 | Z: 0 | mem[Addr]:       2
+  DEBUG   processor:decode_and_execute_instruction TICK:  599 | AC:    1 | PC:  57 | IR: dec   | DR:       0 | SP:   0 | Addr:  56 | ToMem:      27 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  603 | AC:    1 | PC:  58 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  606 | AC:    1 | PC:  50 | IR: jnz   | DR:      50 | SP:   0 | Addr:  58 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:      50
+  DEBUG   processor:decode_and_execute_instruction TICK:  610 | AC:   27 | PC:  51 | IR: load  | DR:      27 | SP:   0 | Addr:  29 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:      27
+  DEBUG   processor:decode_and_execute_instruction TICK:  613 | AC:   28 | PC:  52 | IR: inc   | DR:       0 | SP:   0 | Addr:  51 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  617 | AC:   28 | PC:  53 | IR: store | DR:      29 | SP:   0 | Addr:  29 | ToMem:      28 | N: 0 | Z: 0 | mem[Addr]:      28
+  DEBUG   processor:decode_and_execute_instruction TICK:  623 | AC:   63 | PC:  54 | IR: load  | DR:      63 | SP:   0 | Addr:  28 | ToMem:      28 | N: 0 | Z: 0 | mem[Addr]:      63
+  DEBUG   processor:signal_output output_buffer: 'What is your name' << '?'
+  DEBUG   processor:decode_and_execute_instruction TICK:  627 | AC:   63 | PC:  55 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      28 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  631 | AC:    1 | PC:  56 | IR: load  | DR:       1 | SP:   0 | Addr:  42 | ToMem:      28 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  634 | AC:    0 | PC:  57 | IR: dec   | DR:       0 | SP:   0 | Addr:  56 | ToMem:      28 | N: 0 | Z: 1 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  638 | AC:    0 | PC:  58 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       0 | N: 0 | Z: 1 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  641 | AC:    0 | PC:  59 | IR: jnz   | DR:      50 | SP:   0 | Addr:  58 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      50
+  DEBUG   processor:signal_latch_ac input: 'E'
+  DEBUG   processor:decode_and_execute_instruction TICK:  644 | AC:   69 | PC:  60 | IR: in    | DR:      43 | SP:   0 | Addr:  59 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      43
+  DEBUG   processor:decode_and_execute_instruction TICK:  648 | AC:   69 | PC:  61 | IR: cmp   | DR:      10 | SP:   0 | Addr:  46 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      10
+  DEBUG   processor:decode_and_execute_instruction TICK:  651 | AC:   69 | PC:  65 | IR: jnz   | DR:      65 | SP:   0 | Addr:  61 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      65
+  DEBUG   processor:decode_and_execute_instruction TICK:  657 | AC:   69 | PC:  66 | IR: store | DR:     108 | SP:   0 | Addr: 108 | ToMem:      69 | N: 0 | Z: 0 | mem[Addr]:      69
+  DEBUG   processor:decode_and_execute_instruction TICK:  661 | AC:  108 | PC:  67 | IR: load  | DR:     108 | SP:   0 | Addr: 106 | ToMem:      69 | N: 0 | Z: 0 | mem[Addr]:     108
+  DEBUG   processor:decode_and_execute_instruction TICK:  664 | AC:  109 | PC:  68 | IR: inc   | DR:       0 | SP:   0 | Addr:  67 | ToMem:      69 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  668 | AC:  109 | PC:  69 | IR: store | DR:     106 | SP:   0 | Addr: 106 | ToMem:     109 | N: 0 | Z: 0 | mem[Addr]:     109
+  DEBUG   processor:decode_and_execute_instruction TICK:  672 | AC:    0 | PC:  70 | IR: load  | DR:       0 | SP:   0 | Addr: 105 | ToMem:     109 | N: 0 | Z: 1 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  675 | AC:    1 | PC:  71 | IR: inc   | DR:       0 | SP:   0 | Addr:  70 | ToMem:     109 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  679 | AC:    1 | PC:  72 | IR: store | DR:     105 | SP:   0 | Addr: 105 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  683 | AC:    0 | PC:  73 | IR: load  | DR:       0 | SP:   0 | Addr:  45 | ToMem:       1 | N: 0 | Z: 1 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  686 | AC:    0 | PC:  59 | IR: jz    | DR:      59 | SP:   0 | Addr:  73 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:      59
+  DEBUG   processor:signal_latch_ac input: 'g'
+  DEBUG   processor:decode_and_execute_instruction TICK:  689 | AC:  103 | PC:  60 | IR: in    | DR:      43 | SP:   0 | Addr:  59 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:      43
+  DEBUG   processor:decode_and_execute_instruction TICK:  693 | AC:  103 | PC:  61 | IR: cmp   | DR:      10 | SP:   0 | Addr:  46 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:      10
+  DEBUG   processor:decode_and_execute_instruction TICK:  696 | AC:  103 | PC:  65 | IR: jnz   | DR:      65 | SP:   0 | Addr:  61 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:      65
+  DEBUG   processor:decode_and_execute_instruction TICK:  702 | AC:  103 | PC:  66 | IR: store | DR:     109 | SP:   0 | Addr: 109 | ToMem:     103 | N: 0 | Z: 0 | mem[Addr]:     103
+  DEBUG   processor:decode_and_execute_instruction TICK:  706 | AC:  109 | PC:  67 | IR: load  | DR:     109 | SP:   0 | Addr: 106 | ToMem:     103 | N: 0 | Z: 0 | mem[Addr]:     109
+  DEBUG   processor:decode_and_execute_instruction TICK:  709 | AC:  110 | PC:  68 | IR: inc   | DR:       0 | SP:   0 | Addr:  67 | ToMem:     103 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  713 | AC:  110 | PC:  69 | IR: store | DR:     106 | SP:   0 | Addr: 106 | ToMem:     110 | N: 0 | Z: 0 | mem[Addr]:     110
+  DEBUG   processor:decode_and_execute_instruction TICK:  717 | AC:    1 | PC:  70 | IR: load  | DR:       1 | SP:   0 | Addr: 105 | ToMem:     110 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  720 | AC:    2 | PC:  71 | IR: inc   | DR:       0 | SP:   0 | Addr:  70 | ToMem:     110 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  724 | AC:    2 | PC:  72 | IR: store | DR:     105 | SP:   0 | Addr: 105 | ToMem:       2 | N: 0 | Z: 0 | mem[Addr]:       2
+  DEBUG   processor:decode_and_execute_instruction TICK:  728 | AC:    0 | PC:  73 | IR: load  | DR:       0 | SP:   0 | Addr:  45 | ToMem:       2 | N: 0 | Z: 1 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  731 | AC:    0 | PC:  59 | IR: jz    | DR:      59 | SP:   0 | Addr:  73 | ToMem:       2 | N: 0 | Z: 0 | mem[Addr]:      59
+  DEBUG   processor:signal_latch_ac input: 'o'
+  DEBUG   processor:decode_and_execute_instruction TICK:  734 | AC:  111 | PC:  60 | IR: in    | DR:      43 | SP:   0 | Addr:  59 | ToMem:       2 | N: 0 | Z: 0 | mem[Addr]:      43
+  DEBUG   processor:decode_and_execute_instruction TICK:  738 | AC:  111 | PC:  61 | IR: cmp   | DR:      10 | SP:   0 | Addr:  46 | ToMem:       2 | N: 0 | Z: 0 | mem[Addr]:      10
+  DEBUG   processor:decode_and_execute_instruction TICK:  741 | AC:  111 | PC:  65 | IR: jnz   | DR:      65 | SP:   0 | Addr:  61 | ToMem:       2 | N: 0 | Z: 0 | mem[Addr]:      65
+  DEBUG   processor:decode_and_execute_instruction TICK:  747 | AC:  111 | PC:  66 | IR: store | DR:     110 | SP:   0 | Addr: 110 | ToMem:     111 | N: 0 | Z: 0 | mem[Addr]:     111
+  DEBUG   processor:decode_and_execute_instruction TICK:  751 | AC:  110 | PC:  67 | IR: load  | DR:     110 | SP:   0 | Addr: 106 | ToMem:     111 | N: 0 | Z: 0 | mem[Addr]:     110
+  DEBUG   processor:decode_and_execute_instruction TICK:  754 | AC:  111 | PC:  68 | IR: inc   | DR:       0 | SP:   0 | Addr:  67 | ToMem:     111 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  758 | AC:  111 | PC:  69 | IR: store | DR:     106 | SP:   0 | Addr: 106 | ToMem:     111 | N: 0 | Z: 0 | mem[Addr]:     111
+  DEBUG   processor:decode_and_execute_instruction TICK:  762 | AC:    2 | PC:  70 | IR: load  | DR:       2 | SP:   0 | Addr: 105 | ToMem:     111 | N: 0 | Z: 0 | mem[Addr]:       2
+  DEBUG   processor:decode_and_execute_instruction TICK:  765 | AC:    3 | PC:  71 | IR: inc   | DR:       0 | SP:   0 | Addr:  70 | ToMem:     111 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  769 | AC:    3 | PC:  72 | IR: store | DR:     105 | SP:   0 | Addr: 105 | ToMem:       3 | N: 0 | Z: 0 | mem[Addr]:       3
+  DEBUG   processor:decode_and_execute_instruction TICK:  773 | AC:    0 | PC:  73 | IR: load  | DR:       0 | SP:   0 | Addr:  45 | ToMem:       3 | N: 0 | Z: 1 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  776 | AC:    0 | PC:  59 | IR: jz    | DR:      59 | SP:   0 | Addr:  73 | ToMem:       3 | N: 0 | Z: 0 | mem[Addr]:      59
+  DEBUG   processor:signal_latch_ac input: 'r'
+  DEBUG   processor:decode_and_execute_instruction TICK:  779 | AC:  114 | PC:  60 | IR: in    | DR:      43 | SP:   0 | Addr:  59 | ToMem:       3 | N: 0 | Z: 0 | mem[Addr]:      43
+  DEBUG   processor:decode_and_execute_instruction TICK:  783 | AC:  114 | PC:  61 | IR: cmp   | DR:      10 | SP:   0 | Addr:  46 | ToMem:       3 | N: 0 | Z: 0 | mem[Addr]:      10
+  DEBUG   processor:decode_and_execute_instruction TICK:  786 | AC:  114 | PC:  65 | IR: jnz   | DR:      65 | SP:   0 | Addr:  61 | ToMem:       3 | N: 0 | Z: 0 | mem[Addr]:      65
+  DEBUG   processor:decode_and_execute_instruction TICK:  792 | AC:  114 | PC:  66 | IR: store | DR:     111 | SP:   0 | Addr: 111 | ToMem:     114 | N: 0 | Z: 0 | mem[Addr]:     114
+  DEBUG   processor:decode_and_execute_instruction TICK:  796 | AC:  111 | PC:  67 | IR: load  | DR:     111 | SP:   0 | Addr: 106 | ToMem:     114 | N: 0 | Z: 0 | mem[Addr]:     111
+  DEBUG   processor:decode_and_execute_instruction TICK:  799 | AC:  112 | PC:  68 | IR: inc   | DR:       0 | SP:   0 | Addr:  67 | ToMem:     114 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  803 | AC:  112 | PC:  69 | IR: store | DR:     106 | SP:   0 | Addr: 106 | ToMem:     112 | N: 0 | Z: 0 | mem[Addr]:     112
+  DEBUG   processor:decode_and_execute_instruction TICK:  807 | AC:    3 | PC:  70 | IR: load  | DR:       3 | SP:   0 | Addr: 105 | ToMem:     112 | N: 0 | Z: 0 | mem[Addr]:       3
+  DEBUG   processor:decode_and_execute_instruction TICK:  810 | AC:    4 | PC:  71 | IR: inc   | DR:       0 | SP:   0 | Addr:  70 | ToMem:     112 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  814 | AC:    4 | PC:  72 | IR: store | DR:     105 | SP:   0 | Addr: 105 | ToMem:       4 | N: 0 | Z: 0 | mem[Addr]:       4
+  DEBUG   processor:decode_and_execute_instruction TICK:  818 | AC:    0 | PC:  73 | IR: load  | DR:       0 | SP:   0 | Addr:  45 | ToMem:       4 | N: 0 | Z: 1 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  821 | AC:    0 | PC:  59 | IR: jz    | DR:      59 | SP:   0 | Addr:  73 | ToMem:       4 | N: 0 | Z: 0 | mem[Addr]:      59
+  DEBUG   processor:signal_latch_ac input: '\n'
+  DEBUG   processor:decode_and_execute_instruction TICK:  824 | AC:   10 | PC:  60 | IR: in    | DR:      43 | SP:   0 | Addr:  59 | ToMem:       4 | N: 0 | Z: 0 | mem[Addr]:      43
+  DEBUG   processor:decode_and_execute_instruction TICK:  828 | AC:   10 | PC:  61 | IR: cmp   | DR:      10 | SP:   0 | Addr:  46 | ToMem:       4 | N: 0 | Z: 1 | mem[Addr]:      10
+  DEBUG   processor:decode_and_execute_instruction TICK:  831 | AC:   10 | PC:  62 | IR: jnz   | DR:      65 | SP:   0 | Addr:  61 | ToMem:       4 | N: 0 | Z: 0 | mem[Addr]:      65
+  DEBUG   processor:decode_and_execute_instruction TICK:  835 | AC:    0 | PC:  63 | IR: load  | DR:       0 | SP:   0 | Addr:  45 | ToMem:       4 | N: 0 | Z: 1 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  838 | AC:    1 | PC:  64 | IR: inc   | DR:       0 | SP:   0 | Addr:  63 | ToMem:       4 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  842 | AC:    1 | PC:  65 | IR: store | DR:      45 | SP:   0 | Addr:  45 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  848 | AC:    1 | PC:  66 | IR: store | DR:     112 | SP:   0 | Addr: 112 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  852 | AC:  112 | PC:  67 | IR: load  | DR:     112 | SP:   0 | Addr: 106 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:     112
+  DEBUG   processor:decode_and_execute_instruction TICK:  855 | AC:  113 | PC:  68 | IR: inc   | DR:       0 | SP:   0 | Addr:  67 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  859 | AC:  113 | PC:  69 | IR: store | DR:     106 | SP:   0 | Addr: 106 | ToMem:     113 | N: 0 | Z: 0 | mem[Addr]:     113
+  DEBUG   processor:decode_and_execute_instruction TICK:  863 | AC:    4 | PC:  70 | IR: load  | DR:       4 | SP:   0 | Addr: 105 | ToMem:     113 | N: 0 | Z: 0 | mem[Addr]:       4
+  DEBUG   processor:decode_and_execute_instruction TICK:  866 | AC:    5 | PC:  71 | IR: inc   | DR:       0 | SP:   0 | Addr:  70 | ToMem:     113 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  870 | AC:    5 | PC:  72 | IR: store | DR:     105 | SP:   0 | Addr: 105 | ToMem:       5 | N: 0 | Z: 0 | mem[Addr]:       5
+  DEBUG   processor:decode_and_execute_instruction TICK:  874 | AC:    1 | PC:  73 | IR: load  | DR:       1 | SP:   0 | Addr:  45 | ToMem:       5 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  877 | AC:    1 | PC:  74 | IR: jz    | DR:      59 | SP:   0 | Addr:  73 | ToMem:       5 | N: 0 | Z: 0 | mem[Addr]:      59
+  DEBUG   processor:decode_and_execute_instruction TICK:  881 | AC:   10 | PC:  75 | IR: load  | DR:      10 | SP:   0 | Addr:  46 | ToMem:       5 | N: 0 | Z: 0 | mem[Addr]:      10
+  DEBUG   processor:signal_output output_buffer: 'What is your name?' << '\n'
+  DEBUG   processor:decode_and_execute_instruction TICK:  885 | AC:   10 | PC:  76 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:       5 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  889 | AC:    7 | PC:  77 | IR: load  | DR:       7 | SP:   0 | Addr:  30 | ToMem:       5 | N: 0 | Z: 0 | mem[Addr]:       7
+  DEBUG   processor:decode_and_execute_instruction TICK:  893 | AC:    7 | PC:  78 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       7 | N: 0 | Z: 0 | mem[Addr]:       7
+  DEBUG   processor:decode_and_execute_instruction TICK:  897 | AC:   30 | PC:  79 | IR: load  | DR:      30 | SP:   0 | Addr:  38 | ToMem:       7 | N: 0 | Z: 0 | mem[Addr]:      30
+  DEBUG   processor:decode_and_execute_instruction TICK:  900 | AC:   31 | PC:  80 | IR: inc   | DR:       0 | SP:   0 | Addr:  79 | ToMem:       7 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  904 | AC:   31 | PC:  81 | IR: store | DR:      38 | SP:   0 | Addr:  38 | ToMem:      31 | N: 0 | Z: 0 | mem[Addr]:      31
+  DEBUG   processor:decode_and_execute_instruction TICK:  910 | AC:   72 | PC:  82 | IR: load  | DR:      72 | SP:   0 | Addr:  31 | ToMem:      31 | N: 0 | Z: 0 | mem[Addr]:      72
+  DEBUG   processor:signal_output output_buffer: 'What is your name?\n' << 'H'
+  DEBUG   processor:decode_and_execute_instruction TICK:  914 | AC:   72 | PC:  83 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      31 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  918 | AC:    7 | PC:  84 | IR: load  | DR:       7 | SP:   0 | Addr:  42 | ToMem:      31 | N: 0 | Z: 0 | mem[Addr]:       7
+  DEBUG   processor:decode_and_execute_instruction TICK:  921 | AC:    6 | PC:  85 | IR: dec   | DR:       0 | SP:   0 | Addr:  84 | ToMem:      31 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  925 | AC:    6 | PC:  86 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       6 | N: 0 | Z: 0 | mem[Addr]:       6
+  DEBUG   processor:decode_and_execute_instruction TICK:  928 | AC:    6 | PC:  78 | IR: jnz   | DR:      78 | SP:   0 | Addr:  86 | ToMem:       6 | N: 0 | Z: 0 | mem[Addr]:      78
+  DEBUG   processor:decode_and_execute_instruction TICK:  932 | AC:   31 | PC:  79 | IR: load  | DR:      31 | SP:   0 | Addr:  38 | ToMem:       6 | N: 0 | Z: 0 | mem[Addr]:      31
+  DEBUG   processor:decode_and_execute_instruction TICK:  935 | AC:   32 | PC:  80 | IR: inc   | DR:       0 | SP:   0 | Addr:  79 | ToMem:       6 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  939 | AC:   32 | PC:  81 | IR: store | DR:      38 | SP:   0 | Addr:  38 | ToMem:      32 | N: 0 | Z: 0 | mem[Addr]:      32
+  DEBUG   processor:decode_and_execute_instruction TICK:  945 | AC:  101 | PC:  82 | IR: load  | DR:     101 | SP:   0 | Addr:  32 | ToMem:      32 | N: 0 | Z: 0 | mem[Addr]:     101
+  DEBUG   processor:signal_output output_buffer: 'What is your name?\nH' << 'e'
+  DEBUG   processor:decode_and_execute_instruction TICK:  949 | AC:  101 | PC:  83 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      32 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  953 | AC:    6 | PC:  84 | IR: load  | DR:       6 | SP:   0 | Addr:  42 | ToMem:      32 | N: 0 | Z: 0 | mem[Addr]:       6
+  DEBUG   processor:decode_and_execute_instruction TICK:  956 | AC:    5 | PC:  85 | IR: dec   | DR:       0 | SP:   0 | Addr:  84 | ToMem:      32 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  960 | AC:    5 | PC:  86 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       5 | N: 0 | Z: 0 | mem[Addr]:       5
+  DEBUG   processor:decode_and_execute_instruction TICK:  963 | AC:    5 | PC:  78 | IR: jnz   | DR:      78 | SP:   0 | Addr:  86 | ToMem:       5 | N: 0 | Z: 0 | mem[Addr]:      78
+  DEBUG   processor:decode_and_execute_instruction TICK:  967 | AC:   32 | PC:  79 | IR: load  | DR:      32 | SP:   0 | Addr:  38 | ToMem:       5 | N: 0 | Z: 0 | mem[Addr]:      32
+  DEBUG   processor:decode_and_execute_instruction TICK:  970 | AC:   33 | PC:  80 | IR: inc   | DR:       0 | SP:   0 | Addr:  79 | ToMem:       5 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  974 | AC:   33 | PC:  81 | IR: store | DR:      38 | SP:   0 | Addr:  38 | ToMem:      33 | N: 0 | Z: 0 | mem[Addr]:      33
+  DEBUG   processor:decode_and_execute_instruction TICK:  980 | AC:  108 | PC:  82 | IR: load  | DR:     108 | SP:   0 | Addr:  33 | ToMem:      33 | N: 0 | Z: 0 | mem[Addr]:     108
+  DEBUG   processor:signal_output output_buffer: 'What is your name?\nHe' << 'l'
+  DEBUG   processor:decode_and_execute_instruction TICK:  984 | AC:  108 | PC:  83 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      33 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:  988 | AC:    5 | PC:  84 | IR: load  | DR:       5 | SP:   0 | Addr:  42 | ToMem:      33 | N: 0 | Z: 0 | mem[Addr]:       5
+  DEBUG   processor:decode_and_execute_instruction TICK:  991 | AC:    4 | PC:  85 | IR: dec   | DR:       0 | SP:   0 | Addr:  84 | ToMem:      33 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK:  995 | AC:    4 | PC:  86 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       4 | N: 0 | Z: 0 | mem[Addr]:       4
+  DEBUG   processor:decode_and_execute_instruction TICK:  998 | AC:    4 | PC:  78 | IR: jnz   | DR:      78 | SP:   0 | Addr:  86 | ToMem:       4 | N: 0 | Z: 0 | mem[Addr]:      78
+  DEBUG   processor:decode_and_execute_instruction TICK: 1002 | AC:   33 | PC:  79 | IR: load  | DR:      33 | SP:   0 | Addr:  38 | ToMem:       4 | N: 0 | Z: 0 | mem[Addr]:      33
+  DEBUG   processor:decode_and_execute_instruction TICK: 1005 | AC:   34 | PC:  80 | IR: inc   | DR:       0 | SP:   0 | Addr:  79 | ToMem:       4 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK: 1009 | AC:   34 | PC:  81 | IR: store | DR:      38 | SP:   0 | Addr:  38 | ToMem:      34 | N: 0 | Z: 0 | mem[Addr]:      34
+  DEBUG   processor:decode_and_execute_instruction TICK: 1015 | AC:  108 | PC:  82 | IR: load  | DR:     108 | SP:   0 | Addr:  34 | ToMem:      34 | N: 0 | Z: 0 | mem[Addr]:     108
+  DEBUG   processor:signal_output output_buffer: 'What is your name?\nHel' << 'l'
+  DEBUG   processor:decode_and_execute_instruction TICK: 1019 | AC:  108 | PC:  83 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      34 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK: 1023 | AC:    4 | PC:  84 | IR: load  | DR:       4 | SP:   0 | Addr:  42 | ToMem:      34 | N: 0 | Z: 0 | mem[Addr]:       4
+  DEBUG   processor:decode_and_execute_instruction TICK: 1026 | AC:    3 | PC:  85 | IR: dec   | DR:       0 | SP:   0 | Addr:  84 | ToMem:      34 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK: 1030 | AC:    3 | PC:  86 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       3 | N: 0 | Z: 0 | mem[Addr]:       3
+  DEBUG   processor:decode_and_execute_instruction TICK: 1033 | AC:    3 | PC:  78 | IR: jnz   | DR:      78 | SP:   0 | Addr:  86 | ToMem:       3 | N: 0 | Z: 0 | mem[Addr]:      78
+  DEBUG   processor:decode_and_execute_instruction TICK: 1037 | AC:   34 | PC:  79 | IR: load  | DR:      34 | SP:   0 | Addr:  38 | ToMem:       3 | N: 0 | Z: 0 | mem[Addr]:      34
+  DEBUG   processor:decode_and_execute_instruction TICK: 1040 | AC:   35 | PC:  80 | IR: inc   | DR:       0 | SP:   0 | Addr:  79 | ToMem:       3 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK: 1044 | AC:   35 | PC:  81 | IR: store | DR:      38 | SP:   0 | Addr:  38 | ToMem:      35 | N: 0 | Z: 0 | mem[Addr]:      35
+  DEBUG   processor:decode_and_execute_instruction TICK: 1050 | AC:  111 | PC:  82 | IR: load  | DR:     111 | SP:   0 | Addr:  35 | ToMem:      35 | N: 0 | Z: 0 | mem[Addr]:     111
+  DEBUG   processor:signal_output output_buffer: 'What is your name?\nHell' << 'o'
+  DEBUG   processor:decode_and_execute_instruction TICK: 1054 | AC:  111 | PC:  83 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      35 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK: 1058 | AC:    3 | PC:  84 | IR: load  | DR:       3 | SP:   0 | Addr:  42 | ToMem:      35 | N: 0 | Z: 0 | mem[Addr]:       3
+  DEBUG   processor:decode_and_execute_instruction TICK: 1061 | AC:    2 | PC:  85 | IR: dec   | DR:       0 | SP:   0 | Addr:  84 | ToMem:      35 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK: 1065 | AC:    2 | PC:  86 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       2 | N: 0 | Z: 0 | mem[Addr]:       2
+  DEBUG   processor:decode_and_execute_instruction TICK: 1068 | AC:    2 | PC:  78 | IR: jnz   | DR:      78 | SP:   0 | Addr:  86 | ToMem:       2 | N: 0 | Z: 0 | mem[Addr]:      78
+  DEBUG   processor:decode_and_execute_instruction TICK: 1072 | AC:   35 | PC:  79 | IR: load  | DR:      35 | SP:   0 | Addr:  38 | ToMem:       2 | N: 0 | Z: 0 | mem[Addr]:      35
+  DEBUG   processor:decode_and_execute_instruction TICK: 1075 | AC:   36 | PC:  80 | IR: inc   | DR:       0 | SP:   0 | Addr:  79 | ToMem:       2 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK: 1079 | AC:   36 | PC:  81 | IR: store | DR:      38 | SP:   0 | Addr:  38 | ToMem:      36 | N: 0 | Z: 0 | mem[Addr]:      36
+  DEBUG   processor:decode_and_execute_instruction TICK: 1085 | AC:   44 | PC:  82 | IR: load  | DR:      44 | SP:   0 | Addr:  36 | ToMem:      36 | N: 0 | Z: 0 | mem[Addr]:      44
+  DEBUG   processor:signal_output output_buffer: 'What is your name?\nHello' << ','
+  DEBUG   processor:decode_and_execute_instruction TICK: 1089 | AC:   44 | PC:  83 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      36 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK: 1093 | AC:    2 | PC:  84 | IR: load  | DR:       2 | SP:   0 | Addr:  42 | ToMem:      36 | N: 0 | Z: 0 | mem[Addr]:       2
+  DEBUG   processor:decode_and_execute_instruction TICK: 1096 | AC:    1 | PC:  85 | IR: dec   | DR:       0 | SP:   0 | Addr:  84 | ToMem:      36 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK: 1100 | AC:    1 | PC:  86 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK: 1103 | AC:    1 | PC:  78 | IR: jnz   | DR:      78 | SP:   0 | Addr:  86 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:      78
+  DEBUG   processor:decode_and_execute_instruction TICK: 1107 | AC:   36 | PC:  79 | IR: load  | DR:      36 | SP:   0 | Addr:  38 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:      36
+  DEBUG   processor:decode_and_execute_instruction TICK: 1110 | AC:   37 | PC:  80 | IR: inc   | DR:       0 | SP:   0 | Addr:  79 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK: 1114 | AC:   37 | PC:  81 | IR: store | DR:      38 | SP:   0 | Addr:  38 | ToMem:      37 | N: 0 | Z: 0 | mem[Addr]:      37
+  DEBUG   processor:decode_and_execute_instruction TICK: 1120 | AC:   32 | PC:  82 | IR: load  | DR:      32 | SP:   0 | Addr:  37 | ToMem:      37 | N: 0 | Z: 0 | mem[Addr]:      32
+  DEBUG   processor:signal_output output_buffer: 'What is your name?\nHello,' << ' '
+  DEBUG   processor:decode_and_execute_instruction TICK: 1124 | AC:   32 | PC:  83 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      37 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK: 1128 | AC:    1 | PC:  84 | IR: load  | DR:       1 | SP:   0 | Addr:  42 | ToMem:      37 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK: 1131 | AC:    0 | PC:  85 | IR: dec   | DR:       0 | SP:   0 | Addr:  84 | ToMem:      37 | N: 0 | Z: 1 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK: 1135 | AC:    0 | PC:  86 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       0 | N: 0 | Z: 1 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK: 1138 | AC:    0 | PC:  87 | IR: jnz   | DR:      78 | SP:   0 | Addr:  86 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      78
+  DEBUG   processor:decode_and_execute_instruction TICK: 1142 | AC:    5 | PC:  88 | IR: load  | DR:       5 | SP:   0 | Addr: 105 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:       5
+  DEBUG   processor:decode_and_execute_instruction TICK: 1145 | AC:    4 | PC:  89 | IR: dec   | DR:       0 | SP:   0 | Addr:  88 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK: 1149 | AC:    4 | PC:  90 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       4 | N: 0 | Z: 0 | mem[Addr]:       4
+  DEBUG   processor:decode_and_execute_instruction TICK: 1155 | AC:   69 | PC:  91 | IR: load  | DR:      69 | SP:   0 | Addr: 108 | ToMem:       4 | N: 0 | Z: 0 | mem[Addr]:      69
+  DEBUG   processor:signal_output output_buffer: 'What is your name?\nHello, ' << 'E'
+  DEBUG   processor:decode_and_execute_instruction TICK: 1159 | AC:   69 | PC:  92 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:       4 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK: 1163 | AC:  108 | PC:  93 | IR: load  | DR:     108 | SP:   0 | Addr: 107 | ToMem:       4 | N: 0 | Z: 0 | mem[Addr]:     108
+  DEBUG   processor:decode_and_execute_instruction TICK: 1166 | AC:  109 | PC:  94 | IR: inc   | DR:       0 | SP:   0 | Addr:  93 | ToMem:       4 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK: 1170 | AC:  109 | PC:  95 | IR: store | DR:     107 | SP:   0 | Addr: 107 | ToMem:     109 | N: 0 | Z: 0 | mem[Addr]:     109
+  DEBUG   processor:decode_and_execute_instruction TICK: 1174 | AC:    4 | PC:  96 | IR: load  | DR:       4 | SP:   0 | Addr:  42 | ToMem:     109 | N: 0 | Z: 0 | mem[Addr]:       4
+  DEBUG   processor:decode_and_execute_instruction TICK: 1177 | AC:    3 | PC:  97 | IR: dec   | DR:       0 | SP:   0 | Addr:  96 | ToMem:     109 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK: 1181 | AC:    3 | PC:  98 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       3 | N: 0 | Z: 0 | mem[Addr]:       3
+  DEBUG   processor:decode_and_execute_instruction TICK: 1184 | AC:    3 | PC:  90 | IR: jnz   | DR:      90 | SP:   0 | Addr:  98 | ToMem:       3 | N: 0 | Z: 0 | mem[Addr]:      90
+  DEBUG   processor:decode_and_execute_instruction TICK: 1190 | AC:  103 | PC:  91 | IR: load  | DR:     103 | SP:   0 | Addr: 109 | ToMem:       3 | N: 0 | Z: 0 | mem[Addr]:     103
+  DEBUG   processor:signal_output output_buffer: 'What is your name?\nHello, E' << 'g'
+  DEBUG   processor:decode_and_execute_instruction TICK: 1194 | AC:  103 | PC:  92 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:       3 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK: 1198 | AC:  109 | PC:  93 | IR: load  | DR:     109 | SP:   0 | Addr: 107 | ToMem:       3 | N: 0 | Z: 0 | mem[Addr]:     109
+  DEBUG   processor:decode_and_execute_instruction TICK: 1201 | AC:  110 | PC:  94 | IR: inc   | DR:       0 | SP:   0 | Addr:  93 | ToMem:       3 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK: 1205 | AC:  110 | PC:  95 | IR: store | DR:     107 | SP:   0 | Addr: 107 | ToMem:     110 | N: 0 | Z: 0 | mem[Addr]:     110
+  DEBUG   processor:decode_and_execute_instruction TICK: 1209 | AC:    3 | PC:  96 | IR: load  | DR:       3 | SP:   0 | Addr:  42 | ToMem:     110 | N: 0 | Z: 0 | mem[Addr]:       3
+  DEBUG   processor:decode_and_execute_instruction TICK: 1212 | AC:    2 | PC:  97 | IR: dec   | DR:       0 | SP:   0 | Addr:  96 | ToMem:     110 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK: 1216 | AC:    2 | PC:  98 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       2 | N: 0 | Z: 0 | mem[Addr]:       2
+  DEBUG   processor:decode_and_execute_instruction TICK: 1219 | AC:    2 | PC:  90 | IR: jnz   | DR:      90 | SP:   0 | Addr:  98 | ToMem:       2 | N: 0 | Z: 0 | mem[Addr]:      90
+  DEBUG   processor:decode_and_execute_instruction TICK: 1225 | AC:  111 | PC:  91 | IR: load  | DR:     111 | SP:   0 | Addr: 110 | ToMem:       2 | N: 0 | Z: 0 | mem[Addr]:     111
+  DEBUG   processor:signal_output output_buffer: 'What is your name?\nHello, Eg' << 'o'
+  DEBUG   processor:decode_and_execute_instruction TICK: 1229 | AC:  111 | PC:  92 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:       2 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK: 1233 | AC:  110 | PC:  93 | IR: load  | DR:     110 | SP:   0 | Addr: 107 | ToMem:       2 | N: 0 | Z: 0 | mem[Addr]:     110
+  DEBUG   processor:decode_and_execute_instruction TICK: 1236 | AC:  111 | PC:  94 | IR: inc   | DR:       0 | SP:   0 | Addr:  93 | ToMem:       2 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK: 1240 | AC:  111 | PC:  95 | IR: store | DR:     107 | SP:   0 | Addr: 107 | ToMem:     111 | N: 0 | Z: 0 | mem[Addr]:     111
+  DEBUG   processor:decode_and_execute_instruction TICK: 1244 | AC:    2 | PC:  96 | IR: load  | DR:       2 | SP:   0 | Addr:  42 | ToMem:     111 | N: 0 | Z: 0 | mem[Addr]:       2
+  DEBUG   processor:decode_and_execute_instruction TICK: 1247 | AC:    1 | PC:  97 | IR: dec   | DR:       0 | SP:   0 | Addr:  96 | ToMem:     111 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK: 1251 | AC:    1 | PC:  98 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK: 1254 | AC:    1 | PC:  90 | IR: jnz   | DR:      90 | SP:   0 | Addr:  98 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:      90
+  DEBUG   processor:decode_and_execute_instruction TICK: 1260 | AC:  114 | PC:  91 | IR: load  | DR:     114 | SP:   0 | Addr: 111 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:     114
+  DEBUG   processor:signal_output output_buffer: 'What is your name?\nHello, Ego' << 'r'
+  DEBUG   processor:decode_and_execute_instruction TICK: 1264 | AC:  114 | PC:  92 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK: 1268 | AC:  111 | PC:  93 | IR: load  | DR:     111 | SP:   0 | Addr: 107 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:     111
+  DEBUG   processor:decode_and_execute_instruction TICK: 1271 | AC:  112 | PC:  94 | IR: inc   | DR:       0 | SP:   0 | Addr:  93 | ToMem:       1 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK: 1275 | AC:  112 | PC:  95 | IR: store | DR:     107 | SP:   0 | Addr: 107 | ToMem:     112 | N: 0 | Z: 0 | mem[Addr]:     112
+  DEBUG   processor:decode_and_execute_instruction TICK: 1279 | AC:    1 | PC:  96 | IR: load  | DR:       1 | SP:   0 | Addr:  42 | ToMem:     112 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK: 1282 | AC:    0 | PC:  97 | IR: dec   | DR:       0 | SP:   0 | Addr:  96 | ToMem:     112 | N: 0 | Z: 1 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK: 1286 | AC:    0 | PC:  98 | IR: store | DR:      42 | SP:   0 | Addr:  42 | ToMem:       0 | N: 0 | Z: 1 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK: 1289 | AC:    0 | PC:  99 | IR: jnz   | DR:      90 | SP:   0 | Addr:  98 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      90
+  DEBUG   processor:decode_and_execute_instruction TICK: 1293 | AC:   39 | PC: 100 | IR: load  | DR:      39 | SP:   0 | Addr:  41 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      39
+  DEBUG   processor:decode_and_execute_instruction TICK: 1296 | AC:   40 | PC: 101 | IR: inc   | DR:       0 | SP:   0 | Addr: 100 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:       0
+  DEBUG   processor:decode_and_execute_instruction TICK: 1300 | AC:   40 | PC: 102 | IR: store | DR:      41 | SP:   0 | Addr:  41 | ToMem:      40 | N: 0 | Z: 0 | mem[Addr]:      40
+  DEBUG   processor:decode_and_execute_instruction TICK: 1306 | AC:   33 | PC: 103 | IR: load  | DR:      33 | SP:   0 | Addr:  40 | ToMem:      40 | N: 0 | Z: 0 | mem[Addr]:      33
+  DEBUG   processor:signal_output output_buffer: 'What is your name?\nHello, Egor' << '!'
+  DEBUG   processor:decode_and_execute_instruction TICK: 1310 | AC:   33 | PC: 104 | IR: out   | DR:       1 | SP:   0 | Addr:  44 | ToMem:      40 | N: 0 | Z: 0 | mem[Addr]:       1
+  INFO    processor:simulation    output_buffer(str): 'What is your name?\nHello, Egor!'
+  INFO    processor:simulation    output_buffer(num): [87, 104, 97, 116, 32, 105, 115, 32, 121, 111, 117, 114, 32, 110, 97, 109, 101, 63, 10, 72, 101, 108, 108, 111, 44, 32, 69, 103, 111, 114, 33]

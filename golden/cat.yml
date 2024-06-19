@@ -1,0 +1,82 @@
+in_source: |-
+  org 10
+  in_port:
+      .word 0
+  out_port:
+      .word 1
+  line_feed:
+      .word 10
+
+  _start:
+     in in_port
+      out out_port
+      jmp _start
+      halt
+in_stdin: |
+  ['M', 'i', 'n', 'e', 'c', 'r', 'a', 'f', 't']
+out_code: |-
+  [{"index": 0, "opcode": "jmp", "value": 13, "is_indirect": false},
+   {"index": 10, "opcode": "nop", "value": 0, "is_indirect": false},
+   {"index": 11, "opcode": "nop", "value": 1, "is_indirect": false},
+   {"index": 12, "opcode": "nop", "value": 10, "is_indirect": false},
+   {"index": 13, "opcode": "in", "value": 10, "is_indirect": false},
+   {"index": 14, "opcode": "out", "value": 11, "is_indirect": false},
+   {"index": 15, "opcode": "jmp", "value": 13, "is_indirect": false},
+   {"index": 16, "opcode": "halt", "value": 0, "is_indirect": false}]
+
+out_stdout: |
+  source LoC: 13 code instr: 8
+  ============================================================
+  Minecraft
+  [77, 105, 110, 101, 99, 114, 97, 102, 116]
+  instr_counter:  28 ticks: 95
+
+out_log: |
+  DEBUG   processor:decode_and_execute_instruction TICK:    3 | AC:    0 | PC:  13 | IR: jmp   | DR:      13 | SP:   0 | Addr:   0 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      13
+  DEBUG   processor:signal_latch_ac input: 'M'
+  DEBUG   processor:decode_and_execute_instruction TICK:    6 | AC:   77 | PC:  14 | IR: in    | DR:      10 | SP:   0 | Addr:  13 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      10
+  DEBUG   processor:signal_output output_buffer: '' << 'M'
+  DEBUG   processor:decode_and_execute_instruction TICK:   10 | AC:   77 | PC:  15 | IR: out   | DR:       1 | SP:   0 | Addr:  11 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:   13 | AC:   77 | PC:  13 | IR: jmp   | DR:      13 | SP:   0 | Addr:  15 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      13
+  DEBUG   processor:signal_latch_ac input: 'i'
+  DEBUG   processor:decode_and_execute_instruction TICK:   16 | AC:  105 | PC:  14 | IR: in    | DR:      10 | SP:   0 | Addr:  13 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      10
+  DEBUG   processor:signal_output output_buffer: 'M' << 'i'
+  DEBUG   processor:decode_and_execute_instruction TICK:   20 | AC:  105 | PC:  15 | IR: out   | DR:       1 | SP:   0 | Addr:  11 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:   23 | AC:  105 | PC:  13 | IR: jmp   | DR:      13 | SP:   0 | Addr:  15 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      13
+  DEBUG   processor:signal_latch_ac input: 'n'
+  DEBUG   processor:decode_and_execute_instruction TICK:   26 | AC:  110 | PC:  14 | IR: in    | DR:      10 | SP:   0 | Addr:  13 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      10
+  DEBUG   processor:signal_output output_buffer: 'Mi' << 'n'
+  DEBUG   processor:decode_and_execute_instruction TICK:   30 | AC:  110 | PC:  15 | IR: out   | DR:       1 | SP:   0 | Addr:  11 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:   33 | AC:  110 | PC:  13 | IR: jmp   | DR:      13 | SP:   0 | Addr:  15 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      13
+  DEBUG   processor:signal_latch_ac input: 'e'
+  DEBUG   processor:decode_and_execute_instruction TICK:   36 | AC:  101 | PC:  14 | IR: in    | DR:      10 | SP:   0 | Addr:  13 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      10
+  DEBUG   processor:signal_output output_buffer: 'Min' << 'e'
+  DEBUG   processor:decode_and_execute_instruction TICK:   40 | AC:  101 | PC:  15 | IR: out   | DR:       1 | SP:   0 | Addr:  11 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:   43 | AC:  101 | PC:  13 | IR: jmp   | DR:      13 | SP:   0 | Addr:  15 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      13
+  DEBUG   processor:signal_latch_ac input: 'c'
+  DEBUG   processor:decode_and_execute_instruction TICK:   46 | AC:   99 | PC:  14 | IR: in    | DR:      10 | SP:   0 | Addr:  13 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      10
+  DEBUG   processor:signal_output output_buffer: 'Mine' << 'c'
+  DEBUG   processor:decode_and_execute_instruction TICK:   50 | AC:   99 | PC:  15 | IR: out   | DR:       1 | SP:   0 | Addr:  11 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:   53 | AC:   99 | PC:  13 | IR: jmp   | DR:      13 | SP:   0 | Addr:  15 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      13
+  DEBUG   processor:signal_latch_ac input: 'r'
+  DEBUG   processor:decode_and_execute_instruction TICK:   56 | AC:  114 | PC:  14 | IR: in    | DR:      10 | SP:   0 | Addr:  13 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      10
+  DEBUG   processor:signal_output output_buffer: 'Minec' << 'r'
+  DEBUG   processor:decode_and_execute_instruction TICK:   60 | AC:  114 | PC:  15 | IR: out   | DR:       1 | SP:   0 | Addr:  11 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:   63 | AC:  114 | PC:  13 | IR: jmp   | DR:      13 | SP:   0 | Addr:  15 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      13
+  DEBUG   processor:signal_latch_ac input: 'a'
+  DEBUG   processor:decode_and_execute_instruction TICK:   66 | AC:   97 | PC:  14 | IR: in    | DR:      10 | SP:   0 | Addr:  13 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      10
+  DEBUG   processor:signal_output output_buffer: 'Minecr' << 'a'
+  DEBUG   processor:decode_and_execute_instruction TICK:   70 | AC:   97 | PC:  15 | IR: out   | DR:       1 | SP:   0 | Addr:  11 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:   73 | AC:   97 | PC:  13 | IR: jmp   | DR:      13 | SP:   0 | Addr:  15 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      13
+  DEBUG   processor:signal_latch_ac input: 'f'
+  DEBUG   processor:decode_and_execute_instruction TICK:   76 | AC:  102 | PC:  14 | IR: in    | DR:      10 | SP:   0 | Addr:  13 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      10
+  DEBUG   processor:signal_output output_buffer: 'Minecra' << 'f'
+  DEBUG   processor:decode_and_execute_instruction TICK:   80 | AC:  102 | PC:  15 | IR: out   | DR:       1 | SP:   0 | Addr:  11 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:   83 | AC:  102 | PC:  13 | IR: jmp   | DR:      13 | SP:   0 | Addr:  15 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      13
+  DEBUG   processor:signal_latch_ac input: 't'
+  DEBUG   processor:decode_and_execute_instruction TICK:   86 | AC:  116 | PC:  14 | IR: in    | DR:      10 | SP:   0 | Addr:  13 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      10
+  DEBUG   processor:signal_output output_buffer: 'Minecraf' << 't'
+  DEBUG   processor:decode_and_execute_instruction TICK:   90 | AC:  116 | PC:  15 | IR: out   | DR:       1 | SP:   0 | Addr:  11 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:       1
+  DEBUG   processor:decode_and_execute_instruction TICK:   93 | AC:  116 | PC:  13 | IR: jmp   | DR:      13 | SP:   0 | Addr:  15 | ToMem:       0 | N: 0 | Z: 0 | mem[Addr]:      13
+  INFO    processor:simulation    output_buffer(str): 'Minecraft'
+  INFO    processor:simulation    output_buffer(num): [77, 105, 110, 101, 99, 114, 97, 102, 116]
