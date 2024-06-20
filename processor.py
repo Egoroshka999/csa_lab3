@@ -243,7 +243,6 @@ class DataPath:
         self.alu.set_details(src_a, src_b, operation)
         self.alu.calc()
 
-
 class ControlUnit:
     data_path = None
 
