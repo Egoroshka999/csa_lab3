@@ -20,6 +20,9 @@ class ALU:
         ALUOpcode.DEC_A,
         ALUOpcode.DEC_B,
         ALUOpcode.ADD,
+        ALUOpcode.SUB,
+        ALUOpcode.MUL,
+        ALUOpcode.DIV,
         ALUOpcode.CMP,
         ALUOpcode.TEST,
         ALUOpcode.SKIP_A,
@@ -51,6 +54,16 @@ class ALU:
             self.result = self.src_b - 1
         elif self.operation == ALUOpcode.ADD:
             self.result = self.src_a + self.src_b
+        elif self.operation == ALUOpcode.SUB:
+            self.result = self.src_a - self.src_b
+        elif self.operation == ALUOpcode.MUL:
+            self.result = self.src_a * self.src_b
+        elif self.operation == ALUOpcode.DIV:
+            if self.src_b == 0:
+                logging.error(f"Division by zero: {self.operation}")
+                self.result = 0
+            else:
+                self.result = self.src_a // self.src_b
         elif self.operation == ALUOpcode.CMP:
             tmp_result = self.src_a - self.src_b
         elif self.operation == ALUOpcode.TEST:
@@ -338,6 +351,30 @@ class ControlUnit:
             self.tick()
             self.data_path.signal_latch_dr()
             self.data_path.signal_execute_alu_op(ALUOpcode.ADD, left_sel=Selectors.FROM_AC, right_sel=Selectors.FROM_DR)
+            self.data_path.signal_latch_ac(Selectors.FROM_ALU)
+            self.tick()
+        elif opcode == Opcode.SUB:
+            self.data_path.signal_execute_alu_op(ALUOpcode.SKIP_B, right_sel=Selectors.FROM_DR)
+            self.data_path.signal_latch_addr()
+            self.tick()
+            self.data_path.signal_latch_dr()
+            self.data_path.signal_execute_alu_op(ALUOpcode.SUB, left_sel=Selectors.FROM_AC, right_sel=Selectors.FROM_DR)
+            self.data_path.signal_latch_ac(Selectors.FROM_ALU)
+            self.tick()
+        elif opcode == Opcode.MUL:
+            self.data_path.signal_execute_alu_op(ALUOpcode.SKIP_B, right_sel=Selectors.FROM_DR)
+            self.data_path.signal_latch_addr()
+            self.tick()
+            self.data_path.signal_latch_dr()
+            self.data_path.signal_execute_alu_op(ALUOpcode.MUL, left_sel=Selectors.FROM_AC, right_sel=Selectors.FROM_DR)
+            self.data_path.signal_latch_ac(Selectors.FROM_ALU)
+            self.tick()
+        elif opcode == Opcode.DIV:
+            self.data_path.signal_execute_alu_op(ALUOpcode.SKIP_B, right_sel=Selectors.FROM_DR)
+            self.data_path.signal_latch_addr()
+            self.tick()
+            self.data_path.signal_latch_dr()
+            self.data_path.signal_execute_alu_op(ALUOpcode.DIV, left_sel=Selectors.FROM_AC, right_sel=Selectors.FROM_DR)
             self.data_path.signal_latch_ac(Selectors.FROM_ALU)
             self.tick()
         elif opcode == Opcode.CMP:

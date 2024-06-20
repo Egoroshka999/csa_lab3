@@ -8,6 +8,9 @@ class ALUOpcode(str, Enum):
     DEC_A = "dec_a"
     DEC_B = "dec_b"
     ADD = "add"
+    SUB = "sub"
+    MUL = "mul"
+    DIV = "div"
     CMP = "cmp"
     TEST = "test"
     SKIP_A = "skip_a"
@@ -29,6 +32,9 @@ class Opcode(str, Enum):
     LOAD = "load"
     STORE = "store"
     ADD = "add"
+    SUB = "sub"
+    MUL = "mul"
+    DIV = "div"
     OUT = "out"
     IN = "in"
     CMP = "cmp"
@@ -60,7 +66,7 @@ nullar_instructions = [Opcode.INC, Opcode.DEC, Opcode.HALT, Opcode.PUSH, Opcode.
 
 branch_instructions = [Opcode.JG, Opcode.JZ, Opcode.JNZ, Opcode.JMP]
 
-onear_instructions = [Opcode.LOAD, Opcode.STORE, Opcode.ADD, Opcode.OUT, Opcode.IN, Opcode.CMP, Opcode.TEST]
+onear_instructions = [Opcode.LOAD, Opcode.STORE, Opcode.ADD, Opcode.SUB, Opcode.MUL, Opcode.DIV, Opcode.OUT, Opcode.IN, Opcode.CMP, Opcode.TEST]
 
 
 def write_code(filename, code):
